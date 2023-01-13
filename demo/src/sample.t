@@ -19,6 +19,8 @@
 #include <adv3.h>
 #include <en_us.h>
 
+#include "dynamicThing.h"
+
 versionInfo:    GameID
         name = 'dynamicThing Library Demo Game'
         byline = 'Diegesis & Mimesis'
@@ -38,14 +40,78 @@ versionInfo:    GameID
 	}
 ;
 
-startRoom:      Room 'Void'
-        "This is a featureless void."
+abstractCave: DynamicThing 'cave';
++defaultState: DynamicThingState 'mysterious cave' 'mysterious cave'
+	check() { return(true); }
+	order = 0
+;
++fooState: DynamicThingState '(secret) hideout' 'Bob\'s secret hideout'
+	check() {
+		if(gRevealed('bobFlag')) {
+			isProperName = true;
+			return(true);
+		}
+		return(nil);
+	}
+	order = 1
+;
++barState: DynamicThingState '(hidden) lair' 'the killer\'s hidden lair'
+	check() {
+		if(gRevealed('killerFlag')) {
+			isProperName = true;
+			return(true);
+		}
+		return(nil);
+	}
+	order = 2
+;
++DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer'
+	check() { return(fooState.check() && barState.check()); }
+	order = 3
 ;
 
-me:     Person
-        location = startRoom
+
+// We have to use caveWordAsTitle() in the roomName because (afaik) there
+// isn't any way to convert a message param substitution into title case.
+caveEntrance:      Room 'Entrance to {a caveTitle/him}'
+        "This is the entrance to {a cave/him}.  There's large steel door
+	on the north wall with a sign on it. "
+	north = caveDoorOutside
+;
+// The sign that reveals that the cave is Bob's.
++Fixture 'sign' 'sign'
+	"The sign says, <q>Bob's Secret Hideout</q>.
+	<.reveal bobFlag> "
+;
++me: Person;
+// The piece of evidence that reveals that the cave is the killer's.
++knife: Thing '(bloody) butcher knife' 'butcher knife'
+	"A butcher knife.  The blood on the blade indicates it is
+	the murder weapon.
+	<.reveal killerFlag> "
+;
+++bloodOnKnife: Fixture 'blood' 'blood on the knife'
+	"It's dried. "
+;
++caveKey: Key '(blood) (stained) (blood-stained) brass key' 'brass key'
+	"It's a slightly blood-stained brass key. "
+;
+++bloodOnKey: Fixture 'blood' 'blood on the key'
+	"It's dessicated. "
+;
++fakeKey: Key '(steel) (nondescript) key' 'steel key'
+	"It's a nondescript steel key. "
+;
++caveDoorOutside: LockableWithKey, Door 'door' 'door'
+	destination = livingRoom
+	initiallyLocked = true
+	keyList = [ caveKey ]
 ;
 
-gameMain:       GameMainDef
-        initialPlayerChar = me
+livingRoom: Room 'Living Room In {a caveTitle/him}'
+	"This is the living room in {a cave/him}.  A door leads south. "
+	south = caveDoorInside
 ;
++caveDoorInside: Lockable, Door -> caveDoorOutside 'door' 'door';
+
+gameMain: GameMainDef initialPlayerChar = me;
