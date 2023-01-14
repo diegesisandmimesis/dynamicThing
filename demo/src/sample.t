@@ -80,7 +80,7 @@ abstractCave: DynamicThing 'cave';
 //
 // Mechanically the same as the above state.
 +barState: DynamicThingState
-	'(hidden) lair' 'the killer\'s hidden lair' +2 'killerFlag'
+	'(hidden) lair' 'the killer\'s hidden lair' +1 'killerFlag'
 	isProperName = true;
 ;
 //
@@ -90,7 +90,7 @@ abstractCave: DynamicThing 'cave';
 // We assign the two states immediately above to variables entirely
 // so we can check them here.  Note that the first (default) and last (this)
 // state don't bother to do this.
-+DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer' +3
++DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer' +2
 	isProperName = true
 	dtsCheck() {
 		return(fooState.dtsCheck() && barState.dtsCheck());
