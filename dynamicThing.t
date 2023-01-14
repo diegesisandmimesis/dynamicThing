@@ -10,15 +10,37 @@ dynamicThingModuleID: ModuleID {
         listingOrder = 99
 }
 
-// 
+// Class for states.  
 class DynamicThingState: Thing
-	revealFlag = nil
-	order = nil
+	// 
+	dtsRevealKey = nil
+	
+	dtsOrder = 99
 
-	check() {
-		if(revealFlag == nil)
+	dtsCheck() {
+		if(dtsRevealKey == nil)
 			return(nil);
-		return(gRevealed(revealFlag) == true);
+		return(gRevealed(dtsRevealKey) == true);
+	}
+
+	initializeThing() {
+		inherited();
+		dtsFixOrder();
+	}
+
+	// Kludge to handle the fact we can't put numeric values in a
+	// template definition.
+	dtsFixOrder() {
+		switch(dataTypeXlat(dtsOrder)) {
+			case TypeSString:
+				dtsOrder = toInteger(dtsOrder);
+				break;
+			case TypeInt:
+				break;
+			default:
+				dtsOrder = 99;
+				break;
+		}
 	}
 ;
 
@@ -42,7 +64,12 @@ class DynamicThing: Thing
 	//
 	// If skipSmallWords is true, then small words will be ignored
 	// when converting the name into title case.
-	skipSmallWords = nil
+	// This probably wants to be set to true unless you're planning
+	// on wrestling with it:  if you're using message parameter
+	// substitution to access the state names, they'll use aName,
+	// theName and so on under the hood, and they'll always return
+	// articles and so on in lower case.
+	skipSmallWords = true
 	//
 	// The list of small words to use.
 	smallWords = static [ 'a', 'an', 'of', 'the', 'to' ]
@@ -85,7 +112,7 @@ class DynamicThing: Thing
 	// Sort the list in ascending order.
 	sortDynamicThingStateList() {
 		_dynamicThingStateList = _dynamicThingStateList.sort(nil,
-			{ a, b: a.order - b.order }
+			{ a, b: a.dtsOrder - b.dtsOrder }
 		);
 	}
 
@@ -142,7 +169,7 @@ class DynamicThing: Thing
 		// Check the states.  Order matters;  we return the
 		// matching state with the highest order property.
 		for(i = 1; i <= l.length(); i++) {
-			if(l[i].check() == true)
+			if(l[i].dtsCheck() == true)
 				st = l[i];
 		}
 
@@ -179,6 +206,15 @@ class DynamicThing: Thing
 		return(titleCase(dynamicThingName()));
 	}
 
+	isProperName() {
+		local st;
+
+		st = getDynamicThingState();
+		if(st == nil)
+			return(nil);
+		return(st.isProperName());
+	}
+
 	dynamicThingName() {
 		local st;
 
@@ -201,4 +237,10 @@ class DynamicThingTitle: Thing
 		setGlobalParamName(obj.dynamicThingID + 'title');
 		return(true);
 	}
+;
+
+// Convenience class for declaring default states.
+class DynamicThingStateDefault: DynamicThingState
+	dtsCheck() { return(true); }
+	dtsOrder = 0
 ;

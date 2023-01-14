@@ -13,4 +13,4 @@ DynamicThing template 'dynamicThingID' 'dynamicThingDefault'? [dynamicThingState
 		dynamicThingState = new DynamicThingState(id, def, table)
 */
 DynamicThing template 'dynamicThingID';
-DynamicThingState template 'vocabWords' 'name' 'revealFlag'?;
+DynamicThingState template 'vocabWords' 'name' +dtsOrder? 'dtsRevealKey'?;

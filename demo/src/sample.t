@@ -40,39 +40,67 @@ versionInfo:    GameID
 	}
 ;
 
+// Creates an abstract cave object that can be referenced via
+// something like "This is {a cave/him}. " and "Entrance to {a caveTitle/him}".
 abstractCave: DynamicThing 'cave';
-+defaultState: DynamicThingState 'mysterious cave' 'mysterious cave'
-	check() { return(true); }
-	order = 0
+//
+// List of states for the DynamicThing.
+// template is
+//
+//	DynamicThingState 'VOCABULARY' 'NAME' +ORDER 'REVEAL_KEY'
+//
+// ...where
+//
+//		VOCABULARY is the vocabulary for the state.  the format is
+//			identical to the template for a normal Thing
+//		NAME is the name for the state.  it also uses the same format
+//			as a normal Thing
+//		ORDER is an optional numeric value used to order the states.
+//			the state with the highest order whose check method
+//			returns true will be used
+//		REVEAL_KEY is an optional string to test with gReveal().  only
+//			used if no explicit dtsCheck() method is defined in
+//			the state declaration.
+//
+// The dtsCheck() method is called for each state and the one with the highest
+// numeric order whose check method returns true is the active state.
+//
+// DynamicThingStateDefault is a convenience class that defines a dtsCheck()
+// method that always returns true and an order of 0.
++DynamicThingStateDefault 'mysterious cave' 'mysterious cave';
+//
+// This state defines an order of 1 and its check method will return true
+// when gRevealed('bobFlag') is true.
+// isProperName is set to true so "{a cave/him}" will evaluate to
+// "Bob's secret hideout" instead of "a Bob's secret hideout".
++fooState: DynamicThingState
+	'(secret) hideout' 'Bob\'s secret hideout' +1 'bobFlag'
+	isProperName = true
 ;
-+fooState: DynamicThingState '(secret) hideout' 'Bob\'s secret hideout'
-	check() {
-		if(gRevealed('bobFlag')) {
-			isProperName = true;
-			return(true);
-		}
-		return(nil);
+//
+// Mechanically the same as the above state.
++barState: DynamicThingState
+	'(hidden) lair' 'the killer\'s hidden lair' +2 'killerFlag'
+	isProperName = true;
+;
+//
+// A final state for when both flags are set.
+// For this we don't define a flag for to check with gRevealed() and
+// instead we provide our own dtsCheck() method.
+// We assign the two states immediately above to variables entirely
+// so we can check them here.  Note that the first (default) and last (this)
+// state don't bother to do this.
++DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer' +3
+	isProperName = true
+	dtsCheck() {
+		return(fooState.dtsCheck() && barState.dtsCheck());
 	}
-	order = 1
-;
-+barState: DynamicThingState '(hidden) lair' 'the killer\'s hidden lair'
-	check() {
-		if(gRevealed('killerFlag')) {
-			isProperName = true;
-			return(true);
-		}
-		return(nil);
-	}
-	order = 2
-;
-+DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer'
-	check() { return(fooState.check() && barState.check()); }
-	order = 3
 ;
 
 
-// We have to use caveWordAsTitle() in the roomName because (afaik) there
-// isn't any way to convert a message param substitution into title case.
+// We use {caveTitle} in the room name to get the state name in title
+// case (first letter of every word capitalized).  In the room description
+// we use {cave} to get the "normal" version of the name.
 caveEntrance:      Room 'Entrance to {a caveTitle/him}'
         "This is the entrance to {a cave/him}.  There's large steel door
 	on the north wall with a sign on it. "
