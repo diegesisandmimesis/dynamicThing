@@ -44,7 +44,15 @@ class DynamicThingState: Thing
 	}
 ;
 
+// If we're compiling with suport for event notifications, we make
+// DynamicThing instances event sources.
+// There's more stuff we do for event handling, but it lives in a giant
+// preprocessor block in its own source file, dynamicThingEvents.t.
+#ifdef DYNAMIC_THING_EVENTS
+class DynamicThing: Thing, EventNotifier
+#else // DYNAMIC_THING_EVENTS
 class DynamicThing: Thing
+#endif // DYNAMIC_THING_EVENTS
 	// Unique ID for this instance.  Used as the param name,
 	// so if this is 'foozle', then "You see {a foozle/him}. "
 	// will work.
@@ -101,12 +109,6 @@ class DynamicThing: Thing
 
 		obj = dynamicThingTitleClass.createInstance();
 		obj.dynamicThingInitFromParent(self);
-	}
-
-	dynamicThingChanged(v?) {
-		if(v == nil)
-			v = dynamicThingName();
-		return(v != _dynamicThingLastName);
 	}
 
 	// Sort the list in ascending order.
