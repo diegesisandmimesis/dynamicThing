@@ -4,35 +4,35 @@
 
 #ifdef DYNAMIC_THING_EVENTS
 
-modify DynamicThing
+modify Concept
 	// The current DynamicThingState
-	_dtsCurrent = nil
+	_conceptStateCurrent = nil
 
 	// Returns true if the given arg doesn't match the
 	// current state.
-	dtsChanged(v?) { return(v != _dtsCurrent); }
+	conceptChanged(v?) { return(v != _conceptStateCurrent); }
 
 	// Modify existing DynamicThing.getDynamicThingState() to save
 	// the current state and call the event hander(s) when it changes.
-	getDynamicThingState() {
+	getConceptState() {
 		local st;
 
 		st = inherited();
-		if(dtsChanged(st)) {
-			_dtsCurrent = st;
-			dtsNotify();
+		if(conceptChanged(st)) {
+			_conceptStateCurrent = st;
+			conceptNotify();
 		}
 		return(st);
 	}
 
 	// Stub notification script.
-	dtsNotify() {
-		notifySubscribers('dtsChange');
+	conceptNotify() {
+		notifySubscribers('conceptChange');
 	}
 ;
 
-class DynamicThingListener: EventListener
-	dynamicThingSource = nil
+class DynamicThing: EventListener
+	dynamicThingConcept = nil
 
 	initializeThing() {
 		inherited();
@@ -40,16 +40,19 @@ class DynamicThingListener: EventListener
 	}
 
 	initializeDynamicThingEventListener() {
-		if((dynamicThingSource == nil)
-			|| !dynamicThingSource.ofKind(DynamicThing))
+		if((dynamicThingConcept == nil)
+			|| !dynamicThingConcept.ofKind(Concept))
 			return;
-		dynamicThingSource.addSubscriber(self,
-			&dynamicThingEventHandler, 'dtsChange');
+		dynamicThingConcept.addSubscriber(self,
+			&dynamicThingEventHandler, 'conceptChange');
 	}
 
-	dynamicThingEventHandler(obj?) {
-		"Callback called. ";
-	}
+	dynamicThingEventHandler(obj?) {}
 ;
 
 #endif // DYNAMIC_THING_EVENTS
+
+// Define a placeholder to degrade more gracefully.
+class DynamicThing: Thing;
+
+#else // DYNAMIC_THING_EVENTS

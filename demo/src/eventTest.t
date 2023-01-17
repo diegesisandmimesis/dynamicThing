@@ -42,12 +42,12 @@ versionInfo:    GameID
 
 // Creates an abstract cave object that can be referenced via
 // something like "This is {a cave/him}. " and "Entrance to {a caveTitle/him}".
-abstractCave: DynamicThing 'cave';
+abstractCave: Concept 'cave';
 //
-// List of states for the DynamicThing.
+// List of states for the Concept.
 // template is
 //
-//	DynamicThingState 'VOCABULARY' 'NAME' +ORDER 'REVEAL_KEY'
+//	ConceptState 'VOCABULARY' 'NAME' +ORDER 'REVEAL_KEY'
 //
 // ...where
 //
@@ -59,41 +59,41 @@ abstractCave: DynamicThing 'cave';
 //			the state with the highest order whose check method
 //			returns true will be used
 //		REVEAL_KEY is an optional string to test with gReveal().  only
-//			used if no explicit dtsCheck() method is defined in
+//			used if no explicit conceptCheck() method is defined in
 //			the state declaration.
 //
-// The dtsCheck() method is called for each state and the one with the highest
+// The conceptCheck() method is called for each state and the one with the highest
 // numeric order whose check method returns true is the active state.
 //
-// DynamicThingStateDefault is a convenience class that defines a dtsCheck()
+// ConceptStateDefault is a convenience class that defines a conceptCheck()
 // method that always returns true and an order of 0.
-+DynamicThingStateDefault 'mysterious cave' 'mysterious cave';
++ConceptStateDefault 'mysterious cave' 'mysterious cave';
 //
 // This state defines an order of 1 and its check method will return true
 // when gRevealed('bobFlag') is true.
 // isProperName is set to true so "{a cave/him}" will evaluate to
 // "Bob's secret hideout" instead of "a Bob's secret hideout".
-+fooState: DynamicThingState
++fooState: ConceptState
 	'(secret) hideout' 'Bob\'s secret hideout' +1 'bobFlag'
 	isProperName = true
 ;
 //
 // Mechanically the same as the above state.
-+barState: DynamicThingState
++barState: ConceptState
 	'(hidden) lair' 'the killer\'s hidden lair' +1 'killerFlag'
 	isProperName = true;
 ;
 //
 // A final state for when both flags are set.
 // For this we don't define a flag for to check with gRevealed() and
-// instead we provide our own dtsCheck() method.
+// instead we provide our own conceptCheck() method.
 // We assign the two states immediately above to variables entirely
 // so we can check them here.  Note that the first (default) and last (this)
 // state don't bother to do this.
-+DynamicThingState '(secret) lair' 'the secret lair of Bob, the killer' +2
++ConceptState '(secret) lair' 'the secret lair of Bob, the killer' +2
 	isProperName = true
-	dtsCheck() {
-		return(fooState.dtsCheck() && barState.dtsCheck());
+	conceptCheck() {
+		return(fooState.conceptCheck() && barState.conceptCheck());
 	}
 ;
 
@@ -121,10 +121,10 @@ caveEntrance:      Room 'Entrance to {a caveTitle/him}'
 ++bloodOnKnife: Fixture 'blood' 'blood on the knife'
 	"It's dried. "
 ;
-+caveKey: Key, DynamicThingListener
++caveKey: Key, DynamicThing
 	'(blood) (stained) (blood-stained) brass key' 'brass key'
 	"It's a slightly blood-stained brass key. "
-	dynamicThingSource = abstractCave
+	dynamicThingConcept = abstractCave
 ;
 ++bloodOnKey: Fixture 'blood' 'blood on the key'
 	"It's dessicated. "

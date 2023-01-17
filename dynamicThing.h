@@ -35,5 +35,5 @@
 #endif // EVENT_HANDLER_VERSION
 #endif // DYNAMIC_THING_EVENTS
 
-DynamicThing template 'dynamicThingID';
-DynamicThingState template 'vocabWords' 'name' +dtsOrder? 'dtsRevealKey'?;
+Concept template 'conceptID';
+ConceptState template 'vocabWords' 'name' +conceptOrder? 'conceptRevealKey'?;
