@@ -50,9 +50,9 @@ class DynamicThing: EventListener
 	dynamicThingEventHandler(obj?) {}
 ;
 
-#endif // DYNAMIC_THING_EVENTS
+#else // DYNAMIC_THING_EVENTS
 
 // Define a placeholder to degrade more gracefully.
 class DynamicThing: Thing;
 
-#else // DYNAMIC_THING_EVENTS
+#endif // DYNAMIC_THING_EVENTS
