@@ -28,8 +28,21 @@ versionInfo:    GameID
         version = '1.0'
         IFID = '12345'
 	showAbout() {
-		"This is a simple test game that demonstrates the features
-		of the dynamicThing library.
+		"This demo illustrates how DynamicThing instances can have
+		their vocabulary updated by a Concept.
+		<.p>
+		The brass key can be referred to as being the key to the
+		starting location, using whatever vocabulary has been revealed
+		for it.  So for example at the start of the game the starting
+		location is the <q>Mysterious Cave</q>, so you can use:
+		<.p>\t&gt;X KEY TO MYSTERIOUS CAVE
+		<.p>
+		...to examine it.  If you &gt;X KNIFE, you learn that the
+		mysterious cave is the hidden lair of the killer.  Having
+		learned that, you can now use:
+		<.p>&gt;X KEY TO THE HIDDEN LAIR
+		<.p>
+		...and so on.
 		<.p>
 		Consult the README.txt document distributed with the library
 		source for a quick summary of how to use the library in your
@@ -124,7 +137,17 @@ caveEntrance:      Room 'Entrance to {a caveTitle/him}'
 +caveKey: Key, DynamicThing
 	'(blood) (stained) (blood-stained) brass key' 'brass key'
 	"It's a slightly blood-stained brass key. "
+
+	// Associate this DynamicThing instance with the abstractCave
+	// Concept.  This is what causes the vocabulary of this object, the
+	// key, to automagically be updated when the Concept's state changes
+	// (as the player reveals more "clues").
 	dynamicThingConcept = abstractCave
+
+	// Adds the preposition 'to' to the vocabulary associated with the
+	// concept.  So the key will match both >X MYSTERIOUS CAVE KEY and
+	// >X KEY TO THE MYSTERIOUS CAVE and so on.  Without this defined,
+	// only the first of these will work.
 	dynamicThingPrep = 'to'
 ;
 ++bloodOnKey: Fixture 'blood' 'blood on the key'
