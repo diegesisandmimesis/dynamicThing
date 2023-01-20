@@ -73,13 +73,13 @@ abstractCave: Concept 'cave';
 // when gRevealed('bobFlag') is true.
 // isProperName is set to true so "{a cave/him}" will evaluate to
 // "Bob's secret hideout" instead of "a Bob's secret hideout".
-+fooState: ConceptState
++bobState: ConceptState
 	'(secret) hideout' 'Bob\'s secret hideout' +1 'bobFlag'
 	isProperName = true
 ;
 //
 // Mechanically the same as the above state.
-+barState: ConceptState
++killerState: ConceptState
 	'(hidden) lair' 'the killer\'s hidden lair' +1 'killerFlag'
 	isProperName = true;
 ;
@@ -93,7 +93,7 @@ abstractCave: Concept 'cave';
 +ConceptState '(secret) lair' 'the secret lair of Bob, the killer' +2
 	isProperName = true
 	conceptCheck() {
-		return(fooState.conceptCheck() && barState.conceptCheck());
+		return(bobState.conceptCheck() && killerState.conceptCheck());
 	}
 ;
 
