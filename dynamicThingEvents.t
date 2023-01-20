@@ -45,6 +45,12 @@ class DynamicThing: EventListener
 	// Same as above, only for "from".
 	dynamicThingAddFrom = nil
 
+	// Only update the vocabulary when this is true.
+	// NOTE:  Just setting this to true doesn't in and of itself update
+	//	  the vocabulary, so be sure to use setDynamicThingReady(true)
+	//	  to toggle this on if it starts out nil.
+	dynamicThingReady = true
+
 	initializeThing() {
 		inherited();
 		initializeDynamicThingEventListener();
@@ -66,8 +72,6 @@ class DynamicThing: EventListener
 		if((data == nil) || !data.ofKind(ConceptState))
 			return(nil);
 
-//"WEAK TOKENS\n ";
-//"<<reflectionServices.valToSymbol(weakTokens)>>\n ";
 		// Just reset our vocabulary.
 		initializeVocab();
 
@@ -146,6 +150,13 @@ class DynamicThing: EventListener
 		if((obj == nil) || !obj.ofKind(EventHandlerEvent))
 			return;
 		dynamicThingUpdateVocab(obj.data);
+	}
+
+	setDynamicThingReady(v?) {
+		dynamicThingReady = v;
+		if(dynamicThingReady)
+			dynamicThingUpdateVocab(dynamicThingConcept
+				._conceptStateCurrent);
 	}
 ;
 

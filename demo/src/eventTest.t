@@ -149,6 +149,20 @@ caveEntrance:      Room 'Entrance to {a caveTitle/him}'
 	// >X KEY TO THE MYSTERIOUS CAVE and so on.  Without this defined,
 	// only the first of these will work.
 	dynamicThingPrep = 'to'
+
+	// Only apply the vocabulary from the Concept when this returns true.
+	// Here we don't update our vocabulary until after we know the key
+	// goes to the cave door.
+	dynamicThingReady = nil
+
+	iobjFor(UnlockWith) {
+		action() {
+			inherited();
+
+			// Start updating our vocabulary.
+			setDynamicThingReady(true);
+		}
+	}
 ;
 ++bloodOnKey: Fixture 'blood' 'blood on the key'
 	"It's dessicated. "
