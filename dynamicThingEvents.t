@@ -64,10 +64,10 @@ class DynamicThing: EventListener
 			&dynamicThingEventHandler, 'conceptChange');
 	}
 
-	uniquifyList() {
-	}
-
 	dynamicThingUpdateVocab(data) {
+		if(dynamicThingReady != true)
+			return(nil);
+
 		// Make sure the argument we got it valid.
 		if((data == nil) || !data.ofKind(ConceptState))
 			return(nil);
