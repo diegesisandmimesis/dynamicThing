@@ -135,7 +135,7 @@ caveEntrance:      Room 'Entrance to {a caveTitle/him}'
 	"It's dried. "
 ;
 +caveKey: Key, DynamicThing
-	'key (to) (blood) (stained) (blood-stained) brass key' 'brass key'
+	'(blood) (stained) (blood-stained) brass key' 'brass key'
 	"It's a slightly blood-stained brass key. "
 
 	// Associate this DynamicThing instance with the abstractCave

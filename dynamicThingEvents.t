@@ -54,6 +54,11 @@ class DynamicThing: EventListener
 	initializeThing() {
 		inherited();
 		initializeDynamicThingEventListener();
+		initializeDynamicThingVocab();
+	}
+
+	initializeDynamicThingVocab() {
+		dynamicThingAddPrepositions(nil);
 	}
 
 	initializeDynamicThingEventListener() {
@@ -135,7 +140,15 @@ class DynamicThing: EventListener
 		// So if prep is 'from' and the name of the concept state is
 		// 'underground golf course' then we'll get a parsed array
 		// of tokens for 'from the underground golf course'.
-		str = cmdTokenizer.tokenize(prep + ' ' + data.theName);
+		if(data == nil)
+			// First time we're called, at startup, we just
+			// want to add the preposition so that the failure
+			// messages are a little less misleading
+			// ("You see no..." instead of "The story doesn't
+			// understand...").
+			str = [[prep, nil, prep]];
+		else 
+			str = cmdTokenizer.tokenize(prep + ' ' + data.theName);
 
 		// Now we add each of the tokens we got above as an adjective
 		// in our dictionary.
