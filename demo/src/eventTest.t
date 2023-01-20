@@ -125,6 +125,7 @@ caveEntrance:      Room 'Entrance to {a caveTitle/him}'
 	'(blood) (stained) (blood-stained) brass key' 'brass key'
 	"It's a slightly blood-stained brass key. "
 	dynamicThingConcept = abstractCave
+	dynamicThingPrep = 'to'
 ;
 ++bloodOnKey: Fixture 'blood' 'blood on the key'
 	"It's dessicated. "

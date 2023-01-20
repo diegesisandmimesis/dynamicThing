@@ -40,18 +40,6 @@ class ConceptState: Thing
 	// the new active state.
 	conceptOrder = 99
 
-	// How to use this concept as a prepositional phrase.
-	// By default we use theName, so if the name for this ConceptState
-	// is 'mysterious cave' then the prepPhrase will be
-	// 'the mysterious cave', and that gets us the derived properties
-	// 'to the mysterious cave' (as in 'key to the mysterious cave') and
-	// 'from the mysterious cave' (as in 'book from the mysterious cave').
-	// These can be overridden individual if necessary to handle difficult
-	// cases.
-	prepPhrase = theName
-	toPrepPhrase = (prepPhrase ? 'to ' + prepPhrase : nil)
-	fromPrepPhrase = (prepPhrase ? 'from ' + prepPhrase : nil)
-
 	// Check method for this state.  Returns true if the state is
 	// eligible to become active, nil otherwise.
 	// By default this just checks the conceptRevealKey, if any,

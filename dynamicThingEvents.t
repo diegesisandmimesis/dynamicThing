@@ -36,12 +36,18 @@ modify Concept
 ;
 
 class DynamicThing: EventListener
+	// Concept instance whose states we'll use to update our vocabulary.
 	dynamicThingConcept = nil
+
+	dynamicThingPrep = nil
+	//dynamicThingAddTo = nil
+
+	// Same as above, only for "from".
+	dynamicThingAddFrom = nil
 
 	initializeThing() {
 		inherited();
 		initializeDynamicThingEventListener();
-		//saveDynamicThingInitState();
 	}
 
 	initializeDynamicThingEventListener() {
@@ -52,11 +58,16 @@ class DynamicThing: EventListener
 			&dynamicThingEventHandler, 'conceptChange');
 	}
 
+	uniquifyList() {
+	}
+
 	dynamicThingUpdateVocab(data) {
 		// Make sure the argument we got it valid.
 		if((data == nil) || !data.ofKind(ConceptState))
 			return(nil);
 
+//"WEAK TOKENS\n ";
+//"<<reflectionServices.valToSymbol(weakTokens)>>\n ";
 		// Just reset our vocabulary.
 		initializeVocab();
 
@@ -75,16 +86,44 @@ class DynamicThing: EventListener
 		// If we don't add 'the' as an adjective,
 		// >X THE KEY TO ANCIENT RUINS would work but
 		// >X THE KEY TO THE ANCIENT RUINS would fail.
-		dynamicThingAddPreposition('to', data);
+		dynamicThingAddPrepositions(data);
+
+		self.adjective = self.adjective.getUnique();
+		self.noun = self.noun.getUnique();
+		self.weakTokens = self.weakTokens.getUnique();
+		
+		return(true);
+	}
+	// Try to add whatever prepositional phrases we've been asked to add.
+	dynamicThingAddPrepositions(data) {
+		local l;
+
+		// If we have no prepositions defined, we have nothing to do.
+		if(dynamicThingPrep == nil)
+			return;
+
+		// If our prep list isn't a list, make it one.
+		if(dataType(dynamicThingPrep) == TypeList)
+			l = dynamicThingPrep;
+		else
+			l = [ dynamicThingPrep ];
+
+		// Go through the list, adding all the prepositions.
+		l.forEach(function(o) {
+			_dynamicThingAddPreposition(o, data);
+		});
 
 		// We also need to add our own nouns as adjectives.  If we
 		// don't, then the ungrammatical >X TO THE ANCIENT RUINS
 		// would work but NOT >X KEY TO THE ANCIENT RUINS
 		cmdDict.addWord(self, noun, &adjective);
-
-		return(true);
 	}
-	dynamicThingAddPreposition(prep, data) {
+	_dynamicThingAddWeakToken(v) {
+		if(self.noun.indexOf(v) != nil)
+			return;
+		weakTokens += v;
+	}
+	_dynamicThingAddPreposition(prep, data) {
 		local str;
 
 		// Create a string containing the preposition we're handling
@@ -99,6 +138,7 @@ class DynamicThing: EventListener
 		str.forEach(function(o) {
 			if(o.length != 3) return;
 			cmdDict.addWord(self, o[3], &adjective);
+			_dynamicThingAddWeakToken(o[3]);
 		});
 	}
 
