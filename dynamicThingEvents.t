@@ -59,18 +59,47 @@ class DynamicThing: EventListener
 
 		// Just reset our vocabulary.
 		initializeVocab();
-		local str = cmdTokenizer.tokenize('to the '
-			+ data.theName);
 
+		// Add the ConceptState's adjectives and nouns to our
+		// dictionary.
+		cmdDict.addWord(self, data.adjective, &adjective);
+		cmdDict.addWord(self, data.noun, &adjective);
+
+		// The addWord() stuff above will get us most of the way to
+		// where we're going:  if we're a 'key' and the concept state
+		// we're adding vocabulary for are the 'ancient ruins' then
+		// with the above >X THE ANCIENT RUINS KEY will work as
+		// expected.  But if we also want
+		// >X THE KEY TO THE ANCIENT RUINS to work, then we need to add
+		// all the prepositions we want to work AS WELL AS THE ARTICLES.
+		// If we don't add 'the' as an adjective,
+		// >X THE KEY TO ANCIENT RUINS would work but
+		// >X THE KEY TO THE ANCIENT RUINS would fail.
+		dynamicThingAddPreposition('to', data);
+
+		// We also need to add our own nouns as adjectives.  If we
+		// don't, then the ungrammatical >X TO THE ANCIENT RUINS
+		// would work but NOT >X KEY TO THE ANCIENT RUINS
+		cmdDict.addWord(self, noun, &adjective);
+
+		return(true);
+	}
+	dynamicThingAddPreposition(prep, data) {
+		local str;
+
+		// Create a string containing the preposition we're handling
+		// and the name of the state we're adding vocabulary for.
+		// So if prep is 'from' and the name of the concept state is
+		// 'underground golf course' then we'll get a parsed array
+		// of tokens for 'from the underground golf course'.
+		str = cmdTokenizer.tokenize(prep + ' ' + data.theName);
+
+		// Now we add each of the tokens we got above as an adjective
+		// in our dictionary.
 		str.forEach(function(o) {
 			if(o.length != 3) return;
 			cmdDict.addWord(self, o[3], &adjective);
 		});
-		cmdDict.addWord(self, data.adjective, &adjective);
-		cmdDict.addWord(self, data.noun, &adjective);
-		cmdDict.addWord(self, noun, &adjective);
-
-		return(true);
 	}
 
 	dynamicThingEventHandler(obj?) {
